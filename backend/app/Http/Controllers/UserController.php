@@ -44,6 +44,20 @@ class UserController
         }
     }
 
+    public function show(string $id)
+    {
+        try {
+            $user = User::find($id);
+            if(!$user){
+                throw new Exception("User not found", 404);
+            }
+
+            return ResponseFormat::response(200, null, $user);
+        } catch (Exception $e) {
+            return ResponseFormat::exceptionResponse($e);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */

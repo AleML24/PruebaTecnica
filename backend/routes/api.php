@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('/user', UserController::class)->only([
     'index',
+    'show',
     'store',
     'update',
     'destroy'
