@@ -21,22 +21,35 @@ class UserController
             $page = $request->page ?? 1;
             $perPage = $request->perPage ?? 20;
 
-            //filter
+            //filters
             $role = $request->role;
+            $name = $request->name;
 
             $users = User::query();
 
-            //applying filter
+            //applying filters
             if ($role)
                 $users = $users->where('role', $role);
+            if ($name)
+                $users = $users->where('name', 'like', "%$name%");
 
-            $users = $users->paginate($perPage, ['*'], 'page', $page);
-            $data = $users->items();
-            $meta = [
-                'current_page' => $users->currentPage(),
-                'last_page' => $users->lastPage(),
-                'total' => $users->total()
-            ];
+            if ($perPage == -1) {
+                $users = $users->get();
+                $data = $users;
+                $meta = [
+                    'total' => $users->count(),
+                    'current_page' => 1,
+                    'last_page' => 1
+                ];
+            } else {
+                $users = $users->paginate($perPage, ['*'], 'page', $page);
+                $data = $users->items();
+                $meta = [
+                    'current_page' => $users->currentPage(),
+                    'last_page' => $users->lastPage(),
+                    'total' => $users->total()
+                ];
+            }
 
             return ResponseFormat::response(200, null, $data, $meta);
         } catch (Exception $e) {
@@ -48,7 +61,7 @@ class UserController
     {
         try {
             $user = User::find($id);
-            if(!$user){
+            if (!$user) {
                 throw new Exception("User not found", 404);
             }
 

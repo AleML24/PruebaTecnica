@@ -5,13 +5,32 @@
  */
 
 // Composables
+import Default from '@/layouts/default.vue'
+import Dashboard from '@/pages/Dashboard.vue'
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
+
+const routes = [
+  {
+    path: '/',
+    component: Default,
+    children: [
+      {
+        path: '',
+        name: 'Dashboard',
+        component: Dashboard
+      },
+      {
+        path: '/estadisticas',
+        name: 'Statistics',
+        component: Dashboard
+      }
+    ]
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: setupLayouts(routes),
+  routes,
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
