@@ -23,7 +23,8 @@ Configurar frontend
  1. Abrir la consola
  2. "cd frontend" => Navegar a la carpeta frontend
  3. "npm install" => Instalar las dependencias
- 4. "npm run preview" 
+ 4. "npm run build" 
+ 5. "npm run preview" 
 *El frontend estará disponible en http://localhost:4173
 
 ## Ejemplo de consulta a los endpoints RESTful
