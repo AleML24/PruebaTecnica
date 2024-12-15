@@ -26,6 +26,7 @@ Configurar frontend
  4. "npm run build" 
  5. "npm run preview" 
 *El frontend estará disponible en http://localhost:4173
+*Se desarrollo un diseño responsivo. Para probarlo desde el navegador (Firefox) pulsar Ctrl+Shift+M
 
 ## Ejemplo de consulta a los endpoints RESTful
  - Listar los usuarios (paginado por defecto 20 itemsPerPage): http://localhost:8000/api/user
