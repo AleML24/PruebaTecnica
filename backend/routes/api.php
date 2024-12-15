@@ -13,4 +13,4 @@ Route::resource('/user', UserController::class)->only([
     'destroy'
 ]);
 
-Route::get('/user/statistics', [UserController::class, 'statistics']);
+Route::get('/statistics', [UserController::class, 'statistics']);

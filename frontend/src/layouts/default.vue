@@ -1,10 +1,10 @@
 <template>
-  <v-app>
+  <v-app class="app">
     <AppBar />
-    <v-main>
+    <v-main class="main">
       <router-view />
+      <AppFooter />
     </v-main>
-    <AppFooter />
   </v-app>
 </template>
 
@@ -12,5 +12,19 @@
 
 import AppBar from '@/components/AppBar.vue';
 
-//
 </script>
+
+<style>
+.app {
+  height: 100dvh;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.main {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background-color: #fafafae5 !important;
+}
+</style>

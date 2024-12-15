@@ -16,3 +16,4 @@ export const index = async (page = 1, perPage = 10, rolFilter = null, userFilter
         console.log(error);
     }
 }
+
