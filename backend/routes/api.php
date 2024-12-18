@@ -14,3 +14,7 @@ Route::resource('/user', UserController::class)->only([
 ]);
 
 Route::get('/statistics', [UserController::class, 'statistics']);
+
+Route::get('/export-users-csv', [UserController::class, 'exportData']);
+Route::get('/export-users-xlsx', [UserController::class, 'exportDataXlsx']);
+Route::get('/export-users-pdf', [UserController::class, 'exportDataPdf']);

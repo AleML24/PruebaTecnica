@@ -4,8 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Utils\ResponseFormat;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use function PHPSTORM_META\map;
 
@@ -154,6 +160,94 @@ class UserController
             return ResponseFormat::response(200, null, $data);
         } catch (Exception $e) {
             return ResponseFormat::exceptionResponse($e);
+        }
+    }
+
+    public function exportDataCsv()
+    {
+        try {
+            $archivo = "users.csv";
+
+            $users = DB::table('users')->select('name as usuario', 'email as correo', 'role as rol')->get();
+
+            $headers = [
+                "Content-type" => "text/csv",
+                "Content-Disposition" => "attachment; filename=$archivo",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Expires" => "0"
+            ];
+
+            $callback = function () use ($users) {
+                $file = fopen('php://output', 'w');
+                fputcsv($file, ['Usuario', 'Correo', 'Rol']); // Encabezados del CSV
+                foreach ($users as $user) {
+                    fputcsv($file, [$user->usuario, $user->correo, $user->rol]);
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        } catch (Exception $e) {
+            return ResponseFormat::exceptionResponse($e);
+        }
+    }
+
+    public function exportDataXlsx()
+    {
+        try {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            //columns headlines
+            $sheet->setCellValue('A1', 'Usuario');
+            $sheet->setCellValue('B1', 'Correo');
+            $sheet->setCellValue('C1', 'Rol');
+
+            //get data
+            $users = DB::table('users')->select('name as usuario', 'email as correo', 'role as rol')->get();
+
+            //start filling on line 2
+            $row = 2;
+            foreach ($users as $user) {
+                $sheet->setCellValue("A$row", $user->usuario);
+                $sheet->setCellValue("B$row", $user->correo);
+                $sheet->setCellValue("C$row", $user->rol);
+                $row++;
+            }
+
+            //Create and save document
+            $writer = new Xlsx($spreadsheet);
+            $archivo = "users.xlsx";
+
+            // Configurar la respuesta para descargar el archivo
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$archivo\"");
+            header('Cache-Control: max-age=0');
+
+            //send file to the browser
+            $writer->save('php://output');
+            exit;
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function exportDataPdf()
+    {
+
+        try {
+            //Get Data
+            $users = DB::table('users')->select('name as usuario', 'email as correo', 'role as rol')->get();
+
+            //load view and send the data
+            $pdf = Pdf::loadView('pdf.exportData', compact('users'));
+
+            // Download pdf file
+            // Descargar el archivo PDF
+            return $pdf->download('usuarios.pdf');
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
